@@ -22,18 +22,44 @@ class ProductActionPage extends Component {
         })
     }
 
+    componentDidMount(){
+        var {match} = this.props;
+        if(match) {
+            var id = match.params.id;
+            callAPI(`products/${id}`,'GET',null).then(res =>  {
+                var data = res.data;
+               this.setState({
+                id : data.id,
+                txtName : data.name,
+                txtPrice : data.price,
+                chkbStatus : data.status
+               });
+            });
+        }
+    }
     onSave = (e) => {
         e.preventDefault();
-        var {txtName, txtPrice, chkbStatus} = this.state;
+        var {id, txtName, txtPrice, chkbStatus} = this.state;
         var {history} = this.props;
-        callAPI('products','POST', {
-            name : txtName,
-            price : txtPrice,
-            status : chkbStatus
-        }).then(res => {
-            //history.push("/");
-            history.goBack();
-        });
+        if (id){ //Update
+            callAPI(`products/${id}`,'PUT', {
+                name : txtName,
+                price : txtPrice,
+                status : chkbStatus
+            }).then(res => {
+                history.goBack();
+            });
+        } else {
+            callAPI('products','POST', {
+                name : txtName,
+                price : txtPrice,
+                status : chkbStatus
+            }).then(res => {
+                //history.push("/");
+                history.goBack();
+            });
+        }
+        
     }
     render() {
         var { txtName, txtPrice, chkbStatus } = this.state;
@@ -50,7 +76,7 @@ class ProductActionPage extends Component {
                     </div>
                     <div className="checkbox">
                         <label>
-                            <input type="checkbox" name="chkbStatus" value={chkbStatus} onChange={this.onChange} />
+                            <input type="checkbox" name="chkbStatus" value={chkbStatus} onChange={this.onChange} checked={chkbStatus} />
                             Active
                        </label>
                     </div>
