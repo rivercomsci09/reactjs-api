@@ -1,0 +1,1 @@
+export const APU_URL = 'http://5dc0df5795f4b90014ddc9a4.mockapi.io/api';
